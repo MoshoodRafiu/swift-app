@@ -1,7 +1,7 @@
 <template>
   <div class="row">
     <div class="col-md-6 doc-verification-wrapper">
-      <div class="doc-verification-container">
+      <div class="doc-verification-container mb-5">
         <img @click="selectFile('photo')" class="doc-verification" src="../../../assets/verification/face.svg" alt="photo">
         <div @click="selectFile('photo')" v-if="!photoUploaded && !photoUploading">
           <div class="verification-info">Click to upload photo</div>
@@ -17,21 +17,21 @@
             </div>
           </div>
         </div>
-        <div v-if="photoUploaded && photoUploading">
+        <div v-if="photoUploaded && !photoUploading">
           <div>
             <div class="verification-info text-success">Uploaded Successfully</div>
             <div class="doc-info">(Verification usually take up to 12 hours or more)</div>
           </div>
           <div>
-            <button class="ver-action-button">View</button>
-            <button class="ver-action-button">Reupload</button>
+            <button @click="showImage = true" class="ver-action-button">View</button>
+            <button @click="selectFile('photo', true)" class="ver-action-button">Reupload</button>
           </div>
         </div>
         <input type="file" @input="uploadFile('photo')" ref="ver_photo" hidden>
       </div>
     </div>
     <div class="col-md-6 doc-verification-wrapper">
-      <div class="doc-verification-container">
+      <div class="doc-verification-container mb-5">
         <img @click="selectFile('doc')" class="doc-verification" src="../../../assets/verification/file.svg" alt="doc">
         <div @click="selectFile('doc')" v-if="!docUploaded && !docUploading">
           <div class="verification-info">Click to upload documents</div>
@@ -48,27 +48,30 @@
           </div>
         </div>
         <div>
-          <div v-if="docUploaded && docUploading">
+          <div v-if="docUploaded && !docUploading">
             <div>
               <div class="verification-info text-success">Uploaded Successfully</div>
               <div class="doc-info">(Verification usually take up to 12 hours or more)</div>
             </div>
             <div>
-              <button class="ver-action-button">View</button>
-              <button class="ver-action-button">Reupload</button>
+              <button @click="showImage = true" class="ver-action-button">View</button>
+              <button @click="selectFile('doc', true)" class="ver-action-button">Reupload</button>
             </div>
           </div>
         </div>
         <input type="file" @input="uploadFile('doc')" ref="ver_doc" hidden>
       </div>
     </div>
+    <app-view-doc v-if="showImage" @close="showImage = false"/>
   </div>
 </template>
 
 <script>
+  import ViewDoc from "@/components/body/verification/partials/ViewDoc";
   export default {
     data(){
       return{
+        showImage: false,
         photoUploaded: false,
         docUploaded: false,
         photoUploading: false,
@@ -78,29 +81,35 @@
       }
     },
     methods: {
-      selectFile(type){
-        if (type === 'photo'){
-          let fileInputElement = this.$refs.ver_photo;
-          fileInputElement.click();
-        }else if (type === 'doc'){
-          let fileInputElement = this.$refs.ver_doc;
-          fileInputElement.click();
+      selectFile(type, reUploading = false){
+        if ((!this.photoUploaded && !this.photoUploading) || (!this.docUploaded && !this.docUploading) || reUploading){
+          if (type === 'photo'){
+            let fileInputElement = this.$refs.ver_photo;
+            fileInputElement.click();
+          }else if (type === 'doc'){
+            let fileInputElement = this.$refs.ver_doc;
+            fileInputElement.click();
+          }
         }
       },
       showUploadStatus(type){
         if (type === 'photo'){
+          this.photoUploaded = false;
           this.photoUploadPercent = 0;
           this.photoUploading = true;
         }else if (type === 'doc'){
+          this.docUploaded = false;
           this.docUploadPercent = 0;
           this.docUploading = true;
         }
         let uploadInterval = setInterval(() => {
           if (type === 'photo' && this.photoUploadPercent >= 100){
             clearInterval(uploadInterval);
+            this.photoUploading = false;
             this.photoUploaded = true;
           }else if (type === 'doc' && this.docUploadPercent >= 100){
             clearInterval(uploadInterval);
+            this.docUploading = false;
             this.docUploaded = true;
           }
           if (type === 'photo'){
@@ -108,12 +117,15 @@
           }else if (type === 'doc'){
             this.docUploadPercent += 5;
           }
-        }, 300);
+        }, 50);
 
       },
       uploadFile(type){
         this.showUploadStatus(type);
       },
+    },
+    components: {
+      appViewDoc: ViewDoc,
     }
   }
 </script>
@@ -135,7 +147,7 @@
   }
   .ver-upload-progress-percentage{
     font-size: 12px;
-    color: #B1AFAF;
+    color: #807e7e;
   }
   .doc-verification-wrapper{
     height: 300px;
@@ -155,13 +167,13 @@
     text-align: center;
   }
   .verification-info{
-    color: #B1AFAF;
+    color: #807e7e;
     font-size: 16px;
     margin: 5px;
     cursor: pointer;
   }
   .doc-info{
-    color: #B1AFAF;
+    color: #807e7e;
     font-size: 13px;
     margin: 5px;
     cursor: pointer;
@@ -184,7 +196,6 @@
       width: 75%;
     }
     .doc-info{
-      color: #B1AFAF;
       font-size: 11px;
       margin: 5px;
     }

@@ -2,7 +2,8 @@ import Home from "@/components/body/Home";
 import Login from "@/components/auth/Login";
 import Trades from "@/components/body/trades/Trades";
 import Profile from "@/components/body/profile/Profile";
-import Verification from "@/components/body/verification/Verification"
+import Verification from "@/components/body/verification/Verification";
+import Wallets from "@/components/body/wallets/Wallets";
 import InitiateBuy from "@/components/body/initiate-trade/Buy";
 import InitiateSell from "@/components/body/initiate-trade/Sell";
 import Register from "@/components/auth/Register";
@@ -29,6 +30,16 @@ export const routes = [
         path: '/verifications',
         component: Verification,
         name: 'verifications'
+    },
+    {
+        path: '/wallets',
+        component: Wallets,
+        name: 'wallets'
+    },
+    {
+        path: 'wallets/:coin/deposit',
+        component: Deposit,
+        name: 'deposit'
     },
     {
         path: '/:coin/buy',

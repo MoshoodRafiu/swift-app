@@ -182,7 +182,7 @@
     padding: 20px 15px;
   }
   .section-title{
-    color: #B1AFAF;
+    color: #807e7e;
   }
   .r-border{
     border-right: 1px solid #e3dfdf;

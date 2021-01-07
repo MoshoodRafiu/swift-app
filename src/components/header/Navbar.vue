@@ -40,7 +40,7 @@
                 <router-link tag="a" :to="{name: 'login'}" exact>Login</router-link>
               </li>
               <li>
-                <router-link tag="a" active-class="active" :to="{name: 'login'}" exact>Wallets</router-link>
+                <router-link tag="a" active-class="active" :to="{name: 'wallets'}" exact>Wallets</router-link>
               </li>
               <li>
                 <router-link tag="a" active-class="active" :to="{name: 'login'}" exact>Adverts</router-link>

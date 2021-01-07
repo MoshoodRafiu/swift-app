@@ -112,10 +112,6 @@
     -webkit-text-fill-color: #ffffff;
     outline: none;
   }
-  .text-emphasis{
-    color: #1d1c98;
-    font-weight: bolder;
-  }
   input::-webkit-outer-spin-button,
   input::-webkit-inner-spin-button {
     -webkit-appearance: none;
@@ -127,6 +123,9 @@
   @media screen and (max-width: 500px) {
     .trade-action-btn-wrapper{
       padding-top: 20px;
+    }
+    .trade-action-btn{
+      font-size: 13px;
     }
   }
 </style>

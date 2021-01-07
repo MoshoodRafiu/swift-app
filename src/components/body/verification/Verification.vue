@@ -14,7 +14,7 @@
           </div>
         </div>
       </div>
-      <div class="trades-body" :class="{' d-flex align-items-center': false}">
+      <div :class="{' d-flex align-items-center': false}">
         <app-loader/>
         <div class="verification-body">
           <app-loader/>
