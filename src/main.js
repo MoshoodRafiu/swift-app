@@ -8,11 +8,13 @@ import {Tabs, Tab} from 'vue-tabs-component';
 import VueAnimated from '@codekraft-studio/vue-animated';
 import VueCountdownTimer from 'vuejs-countdown-timer';
 import VModal from 'vue-js-modal';
+import VueQrcodeReader from "vue-qrcode-reader";
 
 Vue.use(VueAnimated, {
   defaultDuration: 500,
   functional: true
 });
+Vue.use(VueQrcodeReader);
 Vue.use(VModal, { dialog: true });
 Vue.use(VueCountdownTimer);
 Vue.component('tabs', Tabs);

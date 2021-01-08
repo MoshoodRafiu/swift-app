@@ -4,7 +4,7 @@
       <div class="col-md-8 mx-auto wallets-container">
         <div class="row">
           <div class="col-md-5">
-
+            <app-coin-list/>
           </div>
           <div class="col-md-7 text-center d-none d-md-block">
             <img src="../../../assets/wallet.svg" class="wallet-img" alt="wallet">
@@ -16,10 +16,13 @@
 </template>
 
 <script>
-  import
+  import CoinList from "@/components/body/wallets/partials/CoinList";
   export default {
     created() {
       this.$store.commit('hideNavigations');
+    },
+    components: {
+      appCoinList: CoinList
     }
   }
 </script>
@@ -73,16 +76,16 @@
     font-weight: 400;
   }
   .wallet-action-btn.deposit{
-    border: 1px solid #22cf22;
-    color: #22cf22;
-  }
-  .wallet-action-btn.deposit:hover{
     background: #22cf22;
     color: white;
   }
+  .wallet-action-btn.deposit:hover{
+    background: #17ab17;
+    color: white;
+  }
   .wallet-action-btn.withdraw{
-    border: 1px solid #d60c1e;
-    color: #d60c1e;
+    background: #f61d31;
+    color: white;
   }
   .wallet-action-btn.withdraw:hover{
     background: #d60c1e;

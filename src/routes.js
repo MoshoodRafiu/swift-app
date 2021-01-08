@@ -4,6 +4,9 @@ import Trades from "@/components/body/trades/Trades";
 import Profile from "@/components/body/profile/Profile";
 import Verification from "@/components/body/verification/Verification";
 import Wallets from "@/components/body/wallets/Wallets";
+import Adverts from "@/components/body/adverts/Adverts";
+import Deposit from "@/components/body/wallets/Deposit";
+import Withdraw from "@/components/body/wallets/Withdraw";
 import InitiateBuy from "@/components/body/initiate-trade/Buy";
 import InitiateSell from "@/components/body/initiate-trade/Sell";
 import Register from "@/components/auth/Register";
@@ -32,14 +35,24 @@ export const routes = [
         name: 'verifications'
     },
     {
+        path: '/adverts',
+        component: Adverts,
+        name: 'adverts'
+    },
+    {
         path: '/wallets',
         component: Wallets,
         name: 'wallets'
     },
     {
-        path: 'wallets/:coin/deposit',
+        path: '/wallets/:coin/deposit',
         component: Deposit,
         name: 'deposit'
+    },
+    {
+        path: '/wallets/:coin/withdraw',
+        component: Withdraw,
+        name: 'withdraw'
     },
     {
         path: '/:coin/buy',

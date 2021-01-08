@@ -96,6 +96,7 @@
     color: white;
     border: none;
     border-radius: 5px;
+    font-size: 13px;
   }
   .trade-action-btn:focus{
     outline: none;
