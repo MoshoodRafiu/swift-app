@@ -78,7 +78,7 @@ export default {
   padding: 20px 15px;
 }
 .ads-body{
-  padding: 20px;
+  padding: 10px;
   min-height: 250px;
 }
 </style>

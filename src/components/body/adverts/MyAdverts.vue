@@ -1,38 +1,6 @@
 <template>
   <div>
     <div class="trades-list">
-      <div v-for="trade in 2" :key="trade" class="row trade-wrapper">
-        <div class="col-md-3 trade-user-qty">
-          <div>
-            Access Bank PLC
-          </div>
-          <div class="trade-small-info">
-            via <a href="#">0760953652</a>
-          </div>
-        </div>
-        <div class="col-md-4 trade-amount">
-          <div>
-            0.0065346 - 0.56456236 BTC
-          </div>
-          <div class="trade-small-info">
-            450 per USD <span class="font-weight-bold trade-type bg-danger">Sell</span>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div>
-            15 mins trade
-          </div>
-          <div class="trade-small-info font-italic">
-            last updated: 2021-01-08
-          </div>
-        </div>
-        <div class="col-md-2 text-right my-auto">
-          <div>
-            <button class="ver-action-button">Edit</button>
-            <button class="ver-action-button" @click="deleteAdvert">Del</button>
-          </div>
-        </div>
-      </div>
       <div v-for="trade in 6" :key="trade" class="row trade-wrapper">
         <div class="col-md-3 trade-user-qty">
           <div>
@@ -54,8 +22,8 @@
           <div>
             5 mins trade
           </div>
-          <div class="trade-small-info font-italic">
-            last updated: 2021-01-08
+          <div class="trade-small-info font-italic font-weight-bold text-success">
+            Active
           </div>
         </div>
         <div class="col-md-2 text-right my-auto">

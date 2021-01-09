@@ -69,7 +69,7 @@
           <div class="row" @click="navigateToBuyCoin('buy')">
             <div class="col-md-3 user">
               <div>
-                devKunle
+                devKunle <span class="advert-duration">(15 min)</span>
               </div>
               <div>
                 <div class="rating">
@@ -85,8 +85,8 @@
               <div class="advert-price">
                 8,566,657.55 <span class="currency">NGN Per {{ $store.getters.getActiveCurrency.abbr }}</span>
               </div>
-              <div class="advert-max">
-                Max: 0.0004563
+              <div class="advert-max advert-range">
+                Min:0.0003456332 - Max: 0.000565767
               </div>
             </div>
             <div class="col-md-4 bank">
@@ -128,7 +128,7 @@
           <div class="row" @click="navigateToBuyCoin('sell')">
             <div class="col-md-3 user">
               <div>
-                devKunle
+                devKunle <span class="advert-duration">(15 min)</span>
               </div>
               <div>
                 <div class="rating">
@@ -144,8 +144,8 @@
               <div class="advert-price">
                 8,566,657.55 <span class="currency">NGN Per {{ $store.getters.getActiveCurrency.abbr }}</span>
               </div>
-              <div class="advert-max">
-                Max: 0.0004563
+              <div class="advert-max advert-range">
+                Min:0.0003456332 - Max: 0.000565767
               </div>
             </div>
             <div class="col-md-4 bank">
@@ -286,6 +286,9 @@
   .advert-max, .advert-rate, .rating{
     margin-top: 10px;
     font-size: 13px;
+  }
+  .advert-range{
+    font-size: 12px !important;
   }
   .rating .active{
     color: #ffbf00;
