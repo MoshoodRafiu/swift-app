@@ -3,10 +3,10 @@
     <div class="col-md-8 mx-auto ads-container">
       <div class="trades-header">
         <div class="trades-header-tab-header">
-          <div class="trades-header-tab-item" :class="{'active': activeComponent === 'app-my-adverts'}" @click="switchComponent('app-my-adverts')">
+          <div class="trades-header-tab-item" :class="{'active': activeComponent === 'app-my-adverts' || isEditing}" @click="switchComponent('app-my-adverts')">
             My Adverts
           </div>
-          <div class="trades-header-tab-item" :class="{'active': activeComponent === 'app-new-advert'}" @click="switchComponent('app-new-advert')">
+          <div class="trades-header-tab-item" :class="{'active': activeComponent === 'app-new-advert' && !isEditing}" @click="switchComponent('app-new-advert')">
             New Advert
           </div>
         </div>
@@ -16,7 +16,7 @@
         <div class="ads-body">
           <app-loader/>
           <Animated leave="fadeOut" mode="out-in">
-            <component type="buy" :is="activeComponent" @confirm="showConfirmModal"></component>
+            <component type="buy" @editAdvert="editAdvert" :is-editing="isEditing" :is="activeComponent" @confirm="showConfirmModal"></component>
           </Animated>
         </div>
       </div>
@@ -31,6 +31,7 @@ import Loader from "@/components/body/loader/Loader";
 export default {
   data(){
     return{
+      isEditing: false,
       activeComponent: 'app-my-adverts'
     }
   },
@@ -38,6 +39,10 @@ export default {
     this.$store.commit('hideNavigations');
   },
   methods: {
+    editAdvert(){
+      this.isEditing = true;
+      this.activeComponent = 'app-new-advert';
+    },
     showConfirmModal (data) {
       this.$modal.show('dialog', {
         title: data.title,
@@ -60,6 +65,7 @@ export default {
     },
     switchComponent(to){
       this.activeComponent = to;
+      this.isEditing = false;
     }
   },
   components: {

@@ -176,7 +176,7 @@
       <div class="col-md-12 ad-action-button-wrapper pt-3">
         <div class="row">
           <div class="col-md-4 p-0 ml-auto">
-            <button class="trade-action-btn">Create Advert</button>
+            <button class="trade-action-btn">{{ !isEditing ? 'Create' : 'Update' }} Advert</button>
           </div>
         </div>
       </div>
@@ -185,6 +185,7 @@
 
 <script>
   export default {
+    props: ['isEditing'],
     data(){
       return{
         advert: {

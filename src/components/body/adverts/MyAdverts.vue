@@ -28,7 +28,7 @@
         </div>
         <div class="col-md-2 text-right my-auto">
           <div>
-            <button class="ver-action-button">Edit</button>
+            <button class="ver-action-button" @click="$emit('editAdvert')">Edit</button>
             <button class="ver-action-button" @click="deleteAdvert">Del</button>
           </div>
         </div>
