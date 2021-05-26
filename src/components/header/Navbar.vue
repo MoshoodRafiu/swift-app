@@ -68,14 +68,6 @@
         return{
         }
       },
-      mounted() {
-        if (this.$store.state.isAuthenticated && !this.$store.state.authUser){
-          Auth.user()
-            .then(res => {
-              this.$store.commit('updateUserDetails', res.data.data);
-            });
-        }
-      },
       methods: {
         toggleUserDropdown(){
           if (window.innerWidth <= 900){

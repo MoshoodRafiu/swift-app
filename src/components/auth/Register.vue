@@ -70,7 +70,7 @@ export default {
         })
         .catch(err => {
           this.removeErrorsAndHideLoader();
-          this.alert = { present: true, type: 'error', message: err.response.data.message ?? 'Something went wrong' };
+          this.alert = { present: true, type: 'error', message: err.response.message ?? 'Something went wrong' };
           if (err.response.status === 422){
             this.errors = err.response.data.errors;
           }

@@ -24,7 +24,7 @@ export default {
     }
   },
   mounted() {
-    if (!this.$store.state.isAuthenticated){
+    if (this.$store.state.isAuthenticated && !this.$store.state.authUser){
       Auth.user()
           .then(res => {
             this.$store.commit('updateUserDetails', res.data.data);
