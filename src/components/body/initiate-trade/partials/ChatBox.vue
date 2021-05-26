@@ -69,7 +69,7 @@
       <input type="file" @input="uploadFile" ref="file" hidden>
       <button @click="selectFile" class="upload-file-button">Upload Image</button>
     </div>
-    <div>
+    <div class="p-1">
       <div class="upload-progress">
         <div class="upload-progress-bar"></div>
       </div>

@@ -11,7 +11,8 @@
       <div class="text-center">
         <img class="not-verified-image" src="../../../assets/verification/email.svg" alt="email">
       </div>
-      <div class="text-center doc-info">Didn't receive verification email?</div>
+      <div class="text-center small doc-info">We have emailed a verification link to <b>{{ $store.state.authUser.email }}</b>, kindly verify your email address to proceed.</div>
+      <div class="text-center small doc-info">Didn't receive verification email?</div>
       <div class="text-center">
         <button class="ver-action-button">Request New Email</button>
       </div>

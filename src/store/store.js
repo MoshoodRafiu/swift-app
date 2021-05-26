@@ -7,6 +7,8 @@ Vue.use(Vuex);
 export const store = new Vuex.Store({
     state: {
         isSticky: false,
+        isAuthenticated: !! localStorage.getItem('auth'),
+        authUser: JSON.parse(localStorage.getItem('user_details')) || null,
         activeCurrency: JSON.parse(localStorage.getItem('currency_active')) || {name: "Bitcoin", abbr: "BTC"},
         currencies: [
             {name: "Bitcoin", abbr: "BTC"},
@@ -17,7 +19,8 @@ export const store = new Vuex.Store({
         ],
         navbarToggled: false,
         showTradeWindowLoader: false,
-        showUserDropdown: false
+        showUserDropdown: false,
+        showActionLoader: false
     },
     getters: {
         getSticky: state => {
@@ -65,6 +68,22 @@ export const store = new Vuex.Store({
         hideNavigations: state => {
             state.navbarToggled = false;
             state.showUserDropdown = false;
+        },
+        logUserIn: (state, payload) => {
+            localStorage.setItem('user_details', JSON.stringify(payload));
+            localStorage.setItem('auth', 'true');
+            state.authUser = payload;
+            state.isAuthenticated = true;
+        },
+        logUserOut: state => {
+            localStorage.removeItem('user_details');
+            localStorage.removeItem('auth');
+            state.authUser = null;
+            state.isAuthenticated = false;
+        },
+        updateUserDetails: (state, payload) => {
+            localStorage.setItem('user_details', JSON.stringify(payload));
+            state.authUser = payload;
         },
         setConfirmationBox: (state, payload) => {
             this.$modal.show('dialog', {

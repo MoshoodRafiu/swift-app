@@ -14,12 +14,21 @@
 
 import Navbar from "@/components/header/Navbar";
 import Footer from "./components/footer/Footer";
+import Auth from "@/apis/Auth";
 
 export default {
   name: 'App',
   data(){
     return{
       showScrollToTop: false
+    }
+  },
+  mounted() {
+    if (!this.$store.state.isAuthenticated){
+      Auth.user()
+          .then(res => {
+            this.$store.commit('updateUserDetails', res.data.data);
+          });
     }
   },
   created(){
@@ -31,6 +40,23 @@ export default {
     scrollToTop(){
       const element = document.getElementById("app");
       element.scrollIntoView({behavior: 'smooth'});
+    },
+    logout(){
+      this.$store.state.showActionLoader = true;
+      Auth.logout()
+          .then(() => {
+            this.deleteCredentialsAndRedirect();
+          })
+          .catch(() => {
+            this.deleteCredentialsAndRedirect();
+          });
+    },
+    deleteCredentialsAndRedirect(){
+      this.$store.commit('logUserOut');
+      if (this.$route.name !== 'home'){
+        this.$router.push({ name: 'home' });
+      }
+      this.$store.state.showActionLoader = false;
     }
   },
   components: {
@@ -51,6 +77,14 @@ export default {
     box-sizing: border-box;
     width: 100%;
     overflow-x: hidden;
+  }
+  .alert-success{
+    background: #17ab17 !important;
+    color: #ffffff;
+  }
+  .alert-danger{
+    background: #f61d31;
+    color: #ffffff;
   }
   .vue-dialog-button:focus{
     outline: none;

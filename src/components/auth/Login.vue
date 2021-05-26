@@ -10,14 +10,20 @@
           Login
         </div>
         <div class="body">
+          <app-alert v-if="alert.present" :type="alert.type" :message="alert.message"/>
           <label class="mt-2">
-            <input type="text" class="form-field" placeholder="Email Address">
+            <input type="text" v-model="credentials.email" class="form-field" placeholder="Email Address">
           </label>
+          <app-validation-error-message v-if="errors.email" :message="errors.email[0]"/>
           <label class="mt-2">
-            <input type="password" class="form-field" placeholder="Password">
+            <input type="password" v-model="credentials.password" class="form-field" placeholder="Password">
           </label>
+          <app-validation-error-message v-if="errors.password" :message="errors.password[0]"/>
           <div class="mt-3">
-            <button class="form-button">Login</button>
+            <button :disabled="pageIsProcessing" @click="login" class="form-button" :class="{'disabled': pageIsProcessing}">
+              <span v-if="pageIsProcessing" class="spinner-border" role="status"></span>
+              <span v-else>Login</span>
+            </button>
           </div>
         </div>
         <div class="footer">
@@ -32,7 +38,55 @@
 </template>
 
 <script>
+  import Auth from "@/apis/Auth";
+  import appAlert from "@/components/notification/Alert";
+  import appValidationErrorMessage from "@/components/notification/ValidationErrorMessage";
 
+  export default {
+    data(){
+      return{
+        credentials: {
+          email: null,
+          password: null
+        },
+        errors: [],
+        alert: { present: false, type: null, message: null }
+      }
+    },
+    methods: {
+      login(){
+        this.$store.state.showActionLoader = true;
+        Auth.login(this.credentials)
+            .then(res => {
+              this.removeErrorsAndHideLoader();
+              this.alert = { present: true, type: 'success', message: 'Login successful, redirecting now...' };
+              this.$store.commit('logUserIn', res.data.data);
+              setTimeout(() => this.$router.push({ name: 'verifications' }) ,2000);
+            })
+            .catch(err => {
+              this.removeErrorsAndHideLoader();
+              this.alert = { present: true, type: 'error', message: err.response.data.message ?? 'Something went wrong' };
+              if (err.response.status === 422){
+                this.errors = err.response.data.errors;
+              }
+            });
+      },
+      removeErrorsAndHideLoader(){
+        this.errors = [];
+        this.alert = { present: false, type: null, message: null };
+        this.$store.state.showActionLoader = false;
+      }
+    },
+    computed: {
+      pageIsProcessing(){
+        return this.$store.state.showActionLoader;
+      }
+    },
+    components: {
+      appAlert,
+      appValidationErrorMessage
+    }
+  }
 </script>
 
 <style scoped>
@@ -108,6 +162,12 @@
     color: white;
     border: none;
     border-radius: 3px;
+  }
+  .form-button.disabled,
+  .form-button.disabled:focus,
+  .form-button.disabled:hover{
+    cursor: not-allowed;
+    background: linear-gradient(155deg, #4d71d9, #8efff4);
   }
   .form-button:hover{
     background: linear-gradient(155deg, #2ef3e4, #1641b5);

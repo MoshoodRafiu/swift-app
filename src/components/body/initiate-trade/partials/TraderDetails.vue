@@ -100,9 +100,6 @@
     width: 130px;
     font-weight: 500;
   }
-  .trade-details-item .value{
-    /*padding-left: 50px;*/
-  }
   .trade-details-coin-icon{
     height: 20px;
     margin: 0 2px;

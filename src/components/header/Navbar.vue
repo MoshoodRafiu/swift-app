@@ -20,8 +20,8 @@
               <li>
                 <router-link tag="a" :to="{name: 'home'}" exact active-class="active">Home</router-link>
               </li>
-              <li>
-                <a href="#" :class="{'active': ['profile', 'trades', 'verifications'].includes($route.name)}" @click.prevent="toggleUserDropdown">devKunle <span class="fa fa-angle-down"></span></a>
+              <li v-if="$store.state.isAuthenticated">
+                <a href="#" :class="{'active': ['profile', 'trades', 'verifications'].includes($route.name)}" @click.prevent="toggleUserDropdown">{{ $store.state.authUser ? $store.state.authUser.username : 'Loading...' }} <span class="fa fa-angle-down"></span></a>
                 <div class="sub-menu" :class="{'show': $store.getters.getShowUserDropdown}">
                   <ul>
                     <li>
@@ -36,17 +36,20 @@
                   </ul>
                 </div>
               </li>
-              <li>
+              <li v-if="!$store.state.isAuthenticated">
                 <router-link tag="a" :to="{name: 'login'}" exact>Login</router-link>
               </li>
-              <li>
+              <li v-if="$store.state.isAuthenticated">
                 <router-link tag="a" active-class="active" :to="{name: 'wallets'}">Wallets</router-link>
               </li>
-              <li>
+              <li v-if="$store.state.isAuthenticated">
                 <router-link tag="a" active-class="active" :to="{name: 'adverts'}" exact>Adverts</router-link>
               </li>
-              <li>
+              <li v-if="!$store.state.isAuthenticated">
                 <router-link tag="a" :to="{name: 'register'}" exact>Register</router-link>
+              </li>
+              <li v-if="$store.state.isAuthenticated">
+                <a href="#" @click.prevent="logout">Logout <span v-if="$store.state.showActionLoader" class="spinner-border spinner-border-sm" role="status"></span></a>
               </li>
             </ul>
             <div>
@@ -58,13 +61,43 @@
 </template>
 
 <script>
+    import Auth from "@/apis/Auth";
     export default{
       props: ['isHome'],
+      data(){
+        return{
+        }
+      },
+      mounted() {
+        if (this.$store.state.isAuthenticated && !this.$store.state.authUser){
+          Auth.user()
+            .then(res => {
+              this.$store.commit('updateUserDetails', res.data.data);
+            });
+        }
+      },
       methods: {
         toggleUserDropdown(){
           if (window.innerWidth <= 900){
             this.$store.commit('toggleShowUserDropdown');
           }
+        },
+        logout(){
+          this.$store.state.showActionLoader = true;
+          Auth.logout()
+            .then(() => {
+              this.deleteCredentialsAndRedirect();
+            })
+            .catch(() => {
+              this.deleteCredentialsAndRedirect();
+            });
+        },
+        deleteCredentialsAndRedirect(){
+          this.$store.commit('logUserOut');
+          if (this.$route.name !== 'home'){
+            this.$router.push({ name: 'home' });
+          }
+          this.$store.state.showActionLoader = false;
         }
       }
     }

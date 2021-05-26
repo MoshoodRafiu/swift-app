@@ -10,20 +10,27 @@
           Register
         </div>
         <div class="body">
+          <app-alert v-if="alert.present" :type="alert.type" :message="alert.message"/>
           <label class="mt-2">
-            <input type="text" class="form-field" placeholder="Display Name">
+            <input type="text" v-model="credentials.username" class="form-field" placeholder="Username">
           </label>
+          <app-validation-error-message v-if="errors.username" :message="errors.username[0]"/>
           <label class="mt-2">
-            <input type="text" class="form-field" placeholder="Email Address">
+            <input type="text" v-model="credentials.email" class="form-field" placeholder="Email Address">
           </label>
+          <app-validation-error-message v-if="errors.email" :message="errors.email[0]"/>
           <label class="mt-2">
-            <input type="password" class="form-field" placeholder="Password">
+            <input type="password" v-model="credentials.password" class="form-field" placeholder="Password">
           </label>
+          <app-validation-error-message v-if="errors.password" :message="errors.password[0]"/>
           <label class="mt-2">
-            <input type="password" class="form-field" placeholder="Confirm Password">
+            <input type="password" v-model="credentials.password_confirmation" class="form-field" placeholder="Confirm Password">
           </label>
           <div class="mt-3">
-            <button class="form-button">Register</button>
+            <button :disabled="pageIsProcessing" @click="register" class="form-button" :class="{'disabled': pageIsProcessing}">
+              <span v-if="pageIsProcessing" class="spinner-border" role="status"></span>
+              <span v-else>Register</span>
+            </button>
           </div>
         </div>
       </div>
@@ -35,7 +42,56 @@
 </template>
 
 <script>
-
+import Auth from "@/apis/Auth";
+import appAlert from "@/components/notification/Alert";
+import appValidationErrorMessage from "@/components/notification/ValidationErrorMessage";
+export default {
+  data(){
+    return{
+      credentials: {
+        username: null,
+        email: null,
+        password: null,
+        password_confirmation: null
+      },
+      errors: [],
+      alert: { present: false, type: null, message: null }
+    }
+  },
+  methods: {
+    register(){
+      this.$store.state.showActionLoader = true;
+      Auth.register(this.credentials)
+        .then(res => {
+          this.removeErrorsAndHideLoader();
+          this.alert = { present: true, type: 'success', message: 'Registration successful, redirecting now...' };
+          this.$store.commit('logUserIn', res.data.data);
+          setTimeout(() => this.$router.push({ name: 'home' }) ,2000);
+        })
+        .catch(err => {
+          this.removeErrorsAndHideLoader();
+          this.alert = { present: true, type: 'error', message: err.response.data.message ?? 'Something went wrong' };
+          if (err.response.status === 422){
+            this.errors = err.response.data.errors;
+          }
+        });
+    },
+    removeErrorsAndHideLoader(){
+      this.errors = [];
+      this.alert = { present: false, type: null, message: null };
+      this.$store.state.showActionLoader = false;
+    }
+  },
+  computed: {
+    pageIsProcessing(){
+      return this.$store.state.showActionLoader;
+    }
+  },
+  components: {
+    appAlert,
+    appValidationErrorMessage
+  }
+}
 </script>
 
 <style scoped>
@@ -113,6 +169,12 @@ label{
   color: white;
   border: none;
   border-radius: 3px;
+}
+.form-button.disabled,
+.form-button.disabled:focus,
+.form-button.disabled:hover{
+  cursor: not-allowed;
+  background: linear-gradient(155deg, #4d71d9, #8efff4);
 }
 .form-button:focus{
   outline: none;

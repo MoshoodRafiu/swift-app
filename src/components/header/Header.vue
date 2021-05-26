@@ -127,7 +127,7 @@ export default {
 <style scoped>
   header{
     min-height: 100vh;
-    background: linear-gradient(rgba(29, 28, 152, 0.96), rgba(29, 28, 152, 0.9)), url("../../assets/header.svg") center/cover;
+    background: linear-gradient(rgba(29, 28, 152, 0.9), rgba(29, 28, 152, 0.9)), url("../../assets/header.svg") center/cover;
     width: 100% !important;
     overflow-x: hidden;
   }
@@ -201,7 +201,7 @@ export default {
   .header-section-main{
     padding: 30px 20px;
     min-height: 100vh;
-    overflow: hidden;
+    overflow: hidden !important;
   }
   .header-section{
     display: flex;

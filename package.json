@@ -10,7 +10,9 @@
   "dependencies": {
     "@chenfengyuan/vue-barcode": "^1.0.1",
     "@codekraft-studio/vue-animated": "^0.1.5",
+    "axios": "^0.21.1",
     "core-js": "^3.6.5",
+    "js-cookie": "^2.2.1",
     "qrcode": "^1.4.4",
     "vue": "^2.6.12",
     "vue-barcode": "^1.3.0",

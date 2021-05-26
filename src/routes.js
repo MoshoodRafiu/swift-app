@@ -17,72 +17,85 @@ export const routes = [
     {
         path: '/',
         component: Home,
-        name: 'home'
+        name: 'home',
     },
     {
         path: '/trades',
         component: Trades,
-        name: 'trades'
+        name: 'trades',
+        meta: { requiresAuth: true }
     },
     {
         path: '/profile',
         component: Profile,
-        name: 'profile'
+        name: 'profile',
+        meta: { requiresAuth: true }
     },
     {
         path: '/verifications',
         component: Verification,
-        name: 'verifications'
+        name: 'verifications',
+        meta: { requiresAuth: true }
     },
     {
         path: '/adverts',
         component: Adverts,
-        name: 'adverts'
+        name: 'adverts',
+        meta: { requiresAuth: true }
     },
     {
         path: '/wallets',
         component: Wallets,
-        name: 'wallets'
+        name: 'wallets',
+        meta: { requiresAuth: true }
     },
     {
         path: '/wallets/:coin/deposit',
         component: Deposit,
-        name: 'deposit'
+        name: 'deposit',
+        meta: { requiresAuth: true }
     },
     {
         path: '/wallets/:coin/withdraw',
         component: Withdraw,
-        name: 'withdraw'
+        name: 'withdraw',
+        meta: { requiresAuth: true }
     },
     {
         path: '/:coin/buy',
         component: InitiateBuy,
-        name: 'buy'
+        name: 'buy',
+        meta: { requiresAuth: true }
     },
     {
         path: '/:coin/sell',
         component: InitiateSell,
-        name: 'sell'
+        name: 'sell',
+        meta: { requiresAuth: true }
     },
     {
         path: '/login',
         component: Login,
-        name: 'login'
+        name: 'login',
+        meta: { requiresGuest: true }
     },
     {
         path: '/register',
         component: Register,
-        name: 'register'
+        name: 'register',
+        meta: { requiresGuest: true }
     },
     {
         path: '/forgot-password',
         component: ForgotPassword,
-        name: 'forgotPassword'
+        name: 'forgotPassword',
+        meta: { requiresGuest: true }
     },
     {
         path: '/password/reset',
         component: ChangePassword,
-        name: 'changePassword'
+        name: 'changePassword',
+        meta: { requiresGuest: true }
     },
     {
         path: '*',

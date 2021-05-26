@@ -133,7 +133,7 @@ export default{
         this.showCopied = false;
       }, 1500);
     },
-    copyToClipboard: (input) => {
+    copyToClipboard(input){
       let inputFieldTextToCopy = document.getElementById(input);
       inputFieldTextToCopy.select();
       inputFieldTextToCopy.setSelectionRange(0, 99999);
