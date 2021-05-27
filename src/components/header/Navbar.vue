@@ -49,7 +49,7 @@
                 <router-link tag="a" :to="{name: 'register'}" exact>Register</router-link>
               </li>
               <li v-if="$store.state.isAuthenticated">
-                <a href="#" @click.prevent="logout">Logout <span v-if="$store.state.showActionLoader" class="spinner-border spinner-border-sm" role="status"></span></a>
+                <a href="#" @click.prevent="logout">Logout <span v-if="loading" class="spinner-border spinner-border-sm" role="status"></span></a>
               </li>
             </ul>
             <div>
@@ -66,6 +66,7 @@
       props: ['isHome'],
       data(){
         return{
+          loading: false
         }
       },
       methods: {
@@ -75,7 +76,7 @@
           }
         },
         logout(){
-          this.$store.state.showActionLoader = true;
+          this.loading = true;
           Auth.logout()
             .then(() => {
               this.deleteCredentialsAndRedirect();
@@ -89,7 +90,7 @@
           if (this.$route.name !== 'home'){
             this.$router.push({ name: 'home' });
           }
-          this.$store.state.showActionLoader = false;
+          this.loading = false;
         }
       }
     }

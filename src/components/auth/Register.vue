@@ -12,19 +12,19 @@
         <div class="body">
           <app-alert v-if="alert.present" :type="alert.type" :message="alert.message"/>
           <label class="mt-2">
-            <input type="text" v-model="credentials.username" class="form-field" placeholder="Username">
+            <input type="text" @keypress.enter="register" v-model="credentials.username" class="form-field" placeholder="Username">
           </label>
-          <app-validation-error-message v-if="errors.username" :message="errors.username[0]"/>
+          <app-validation-error-message v-if="errors && errors.username" :message="errors.username[0]"/>
           <label class="mt-2">
-            <input type="text" v-model="credentials.email" class="form-field" placeholder="Email Address">
+            <input type="text" @keypress.enter="register" v-model="credentials.email" class="form-field" placeholder="Email Address">
           </label>
-          <app-validation-error-message v-if="errors.email" :message="errors.email[0]"/>
+          <app-validation-error-message v-if="errors && errors.email" :message="errors.email[0]"/>
           <label class="mt-2">
-            <input type="password" v-model="credentials.password" class="form-field" placeholder="Password">
+            <input type="password" @keypress.enter="register" v-model="credentials.password" class="form-field" placeholder="Password">
           </label>
-          <app-validation-error-message v-if="errors.password" :message="errors.password[0]"/>
+          <app-validation-error-message v-if="errors && errors.password" :message="errors.password[0]"/>
           <label class="mt-2">
-            <input type="password" v-model="credentials.password_confirmation" class="form-field" placeholder="Confirm Password">
+            <input type="password" @keypress.enter="register" v-model="credentials.password_confirmation" class="form-field" placeholder="Confirm Password">
           </label>
           <div class="mt-3">
             <button :disabled="pageIsProcessing" @click="register" class="form-button" :class="{'disabled': pageIsProcessing}">
@@ -66,11 +66,11 @@ export default {
           this.removeErrorsAndHideLoader();
           this.alert = { present: true, type: 'success', message: 'Registration successful, redirecting now...' };
           this.$store.commit('logUserIn', res.data.data);
-          setTimeout(() => this.$router.push({ name: 'home' }) ,2000);
+          setTimeout(() => this.$router.push({ name: 'verifications' }) ,2000);
         })
         .catch(err => {
           this.removeErrorsAndHideLoader();
-          this.alert = { present: true, type: 'error', message: err.response.message ?? 'Something went wrong' };
+          this.alert = { present: true, type: 'error', message: err.response.data.message ?? 'Something went wrong' };
           if (err.response.status === 422){
             this.errors = err.response.data.errors;
           }

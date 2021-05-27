@@ -15,11 +15,9 @@
         </div>
       </div>
       <div :class="{' d-flex align-items-center': false}">
-        <app-loader/>
         <div class="verification-body">
-          <app-loader/>
           <Animated leave="fadeOut" mode="out-in">
-            <component type="buy" :is="activeComponent"></component>
+            <component :is="activeComponent"></component>
           </Animated>
         </div>
       </div>
@@ -32,10 +30,19 @@
   import Phone from "@/components/body/verification/Phone";
   import Documents from "@/components/body/verification/Documents";
   import Loader from "@/components/body/loader/Loader";
+  import Auth from "@/apis/Auth";
   export default {
     data(){
       return{
-        activeComponent: 'app-email'
+        activeComponent: 'app-email',
+      }
+    },
+    mounted() {
+      if (this.$store.state.isAuthenticated){
+        Auth.user()
+          .then(res => {
+            this.$store.commit('updateUserDetails', res.data.data);
+          });
       }
     },
     created() {

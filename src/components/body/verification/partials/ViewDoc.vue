@@ -3,7 +3,7 @@
     <div class="modal-mask">
       <div class="modal-wrapper">
         <div class="modal-container">
-          <div @click="$emit('close')" class="modal-close">x</div>
+          <div @click="$emit('close')" class="modal-close"><span class="fa fa-times"></span></div>
           <div class="modal-body">
             <div class="text-center">
               <slot name="message">

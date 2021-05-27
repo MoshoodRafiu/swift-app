@@ -3,6 +3,7 @@ import Login from "@/components/auth/Login";
 import Trades from "@/components/body/trades/Trades";
 import Profile from "@/components/body/profile/Profile";
 import Verification from "@/components/body/verification/Verification";
+import VerifyEmail from "@/components/body/verification/VerifyEmail";
 import Wallets from "@/components/body/wallets/Wallets";
 import Adverts from "@/components/body/adverts/Adverts";
 import Deposit from "@/components/body/wallets/Deposit";
@@ -36,6 +37,11 @@ export const routes = [
         component: Verification,
         name: 'verifications',
         meta: { requiresAuth: true }
+    },
+    {
+        path: '/email/verify',
+        component: VerifyEmail,
+        name: 'verifyEmail'
     },
     {
         path: '/adverts',

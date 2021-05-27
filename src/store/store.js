@@ -20,7 +20,8 @@ export const store = new Vuex.Store({
         navbarToggled: false,
         showTradeWindowLoader: false,
         showUserDropdown: false,
-        showActionLoader: false
+        showActionLoader: false,
+        uploadProgress: { photo: 0, document: 0 }
     },
     getters: {
         getSticky: state => {
