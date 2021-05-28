@@ -2,8 +2,8 @@ import axios from "axios"
 import {store} from "@/store/store";
 
 const Api = axios.create({
-    // baseURL: 'http://localhost:8000/'
-    baseURL: 'http://api.swifthrive.com/'
+    baseURL: 'http://localhost:8000/'
+    // baseURL: 'http://api.swifthrive.com/'
 });
 
 Api.defaults.withCredentials = true;

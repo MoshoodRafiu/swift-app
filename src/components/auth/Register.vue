@@ -54,37 +54,40 @@ export default {
         password: null,
         password_confirmation: null
       },
+      loading: false,
       errors: [],
       alert: { present: false, type: null, message: null }
     }
   },
   methods: {
     register(){
-      this.$store.state.showActionLoader = true;
-      Auth.register(this.credentials)
-        .then(res => {
-          this.removeErrorsAndHideLoader();
-          this.alert = { present: true, type: 'success', message: 'Registration successful, redirecting now...' };
-          this.$store.commit('logUserIn', res.data.data);
-          setTimeout(() => this.$router.push({ name: 'verifications' }) ,2000);
-        })
-        .catch(err => {
-          this.removeErrorsAndHideLoader();
-          this.alert = { present: true, type: 'error', message: err.response.data.message ?? 'Something went wrong' };
-          if (err.response.status === 422){
-            this.errors = err.response.data.errors;
-          }
-        });
+      if (!this.loading){
+        this.loading = true;
+        Auth.register(this.credentials)
+            .then(res => {
+              this.removeErrorsAndHideLoader();
+              this.alert = { present: true, type: 'success', message: 'Registration successful, redirecting now...' };
+              this.$store.commit('logUserIn', res.data.data);
+              setTimeout(() => this.$router.push({ name: 'verifications' }) ,2000);
+            })
+            .catch(err => {
+              this.removeErrorsAndHideLoader();
+              this.alert = { present: true, type: 'error', message: err.response.data.message ?? 'Something went wrong' };
+              if (err.response.status === 422){
+                this.errors = err.response.data.errors;
+              }
+            });
+      }
     },
     removeErrorsAndHideLoader(){
       this.errors = [];
       this.alert = { present: false, type: null, message: null };
-      this.$store.state.showActionLoader = false;
+      this.loading = false;
     }
   },
   computed: {
     pageIsProcessing(){
-      return this.$store.state.showActionLoader;
+      return this.loading;
     }
   },
   components: {

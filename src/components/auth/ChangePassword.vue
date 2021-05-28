@@ -10,17 +10,23 @@
           Reset Password
         </div>
         <div class="body">
+          <app-alert v-if="alert.present" :type="alert.type" :message="alert.message"/>
           <label class="mt-2">
-            <input type="text" class="form-field" placeholder="user@email.com" disabled>
+            <input type="text" v-model="credentials.email" class="form-field" disabled>
           </label>
+          <app-validation-error-message v-if="errors && errors.email" :message="errors.email[0]"/>
           <label class="mt-2">
-            <input type="password" class="form-field" placeholder="New Password">
+            <input type="password" v-model="credentials.password" class="form-field" placeholder="New Password">
           </label>
+          <app-validation-error-message v-if="errors && errors.password" :message="errors.password[0]"/>
           <label class="mt-2">
-            <input type="password" class="form-field" placeholder="Confirm Password">
+            <input type="password" v-model="credentials.password_confirmation" class="form-field" placeholder="Confirm Password">
           </label>
           <div class="mt-3">
-            <button class="form-button">Reset Password</button>
+            <button :disabled="pageIsProcessing" @click="requestPasswordResetLink" class="form-button" :class="{'disabled': pageIsProcessing}">
+              <span v-if="pageIsProcessing" class="spinner-border" role="status"></span>
+              <span v-else>Reset Password</span>
+            </button>
           </div>
         </div>
       </div>
@@ -29,7 +35,71 @@
 </template>
 
 <script>
+import Auth from "@/apis/Auth";
+import appAlert from "@/components/notification/Alert";
+import appValidationErrorMessage from "@/components/notification/ValidationErrorMessage";
 
+export default {
+  name: 'changePassword',
+  data(){
+    return{
+      credentials: {
+        email: null,
+        password: null,
+        password_confirmation: null,
+        token: null
+      },
+      loading: false,
+      errors: [],
+      alert: { present: false, type: null, message: null }
+    }
+  },
+  mounted() {
+    let email = this.$route.query.email;
+    let token = this.$route.query.token;
+    if (email && token){
+      this.credentials.email = email;
+      this.credentials.token = token;
+    }else{
+      this.$router.push({ name: 'home'});
+    }
+  },
+  methods: {
+    requestPasswordResetLink(){
+      if (!this.loading){
+        this.loading = true;
+        Auth.resetPassword(this.credentials)
+            .then(res => {
+              this.removeErrorsAndHideLoader();
+              this.alert = { present: true, type: 'success', message: 'Password reset successful, redirecting now...' };
+              this.$store.commit('logUserIn', res.data.data);
+              setTimeout(() => this.$router.push({ name: 'home' }) ,2000);
+            })
+            .catch(err => {
+              this.removeErrorsAndHideLoader();
+              this.alert = { present: true, type: 'error', message: err.response.data.message ?? 'Something went wrong' };
+              if (err.response.status === 422){
+                this.errors = err.response.data.errors;
+              }
+            });
+      }
+    },
+    removeErrorsAndHideLoader(){
+      this.errors = [];
+      this.alert = { present: false, type: null, message: null };
+      this.loading = false;
+    }
+  },
+  computed: {
+    pageIsProcessing(){
+      return this.loading;
+    }
+  },
+  components: {
+    appAlert,
+    appValidationErrorMessage
+  }
+}
 </script>
 
 <style scoped>
@@ -107,6 +177,12 @@ label{
   color: white;
   border: none;
   border-radius: 3px;
+}
+.form-button.disabled,
+.form-button.disabled:focus,
+.form-button.disabled:hover{
+  cursor: not-allowed;
+  background: linear-gradient(155deg, #4d71d9, #8efff4);
 }
 .form-button:focus{
   outline: none;

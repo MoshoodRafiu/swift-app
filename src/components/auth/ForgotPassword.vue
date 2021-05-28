@@ -10,11 +10,16 @@
           Reset Password
         </div>
         <div class="body">
+          <app-alert v-if="alert.present" :type="alert.type" :message="alert.message"/>
           <label>
-            <input type="text" class="form-field" placeholder="Email Address">
+            <input type="text" v-model="credentials.email" @keypress.enter="requestPasswordResetLink" class="form-field" placeholder="Email Address">
           </label>
+          <app-validation-error-message v-if="errors && errors.email" :message="errors.email[0]"/>
           <div class="mt-3">
-            <button class="form-button">Send Reset Link</button>
+            <button :disabled="pageIsProcessing" @click="requestPasswordResetLink" class="form-button" :class="{'disabled': pageIsProcessing}">
+              <span v-if="pageIsProcessing" class="spinner-border" role="status"></span>
+              <span v-else>Send Reset Link</span>
+            </button>
           </div>
         </div>
         <div class="footer">
@@ -29,9 +34,56 @@
 </template>
 
 <script>
+import Auth from "@/apis/Auth";
+import appAlert from "@/components/notification/Alert";
+import appValidationErrorMessage from "@/components/notification/ValidationErrorMessage";
 
+export default {
+  data(){
+    return{
+      credentials: {
+        email: null,
+      },
+      loading: false,
+      errors: [],
+      alert: { present: false, type: null, message: null }
+    }
+  },
+  methods: {
+    requestPasswordResetLink(){
+      if (!this.loading){
+        this.loading = true;
+        Auth.requestPasswordResetLink(this.credentials)
+            .then(res => {
+              this.removeErrorsAndHideLoader();
+              this.alert = { present: true, type: 'success', message: res.data.message };
+            })
+            .catch(err => {
+              this.removeErrorsAndHideLoader();
+              this.alert = { present: true, type: 'error', message: err.response.data.message ?? 'Something went wrong' };
+              if (err.response.status === 422){
+                this.errors = err.response.data.errors;
+              }
+            });
+      }
+    },
+    removeErrorsAndHideLoader(){
+      this.errors = [];
+      this.alert = { present: false, type: null, message: null };
+      this.loading = false;
+    }
+  },
+  computed: {
+    pageIsProcessing(){
+      return this.loading;
+    }
+  },
+  components: {
+    appAlert,
+    appValidationErrorMessage
+  }
+}
 </script>
-
 <style scoped>
 .page-wrapper{
   position: fixed;
@@ -105,6 +157,12 @@ label{
   color: white;
   border: none;
   border-radius: 3px;
+}
+.form-button.disabled,
+.form-button.disabled:focus,
+.form-button.disabled:hover{
+  cursor: not-allowed;
+  background: linear-gradient(155deg, #4d71d9, #8efff4);
 }
 .form-button:hover{
   background: linear-gradient(155deg, #2ef3e4, #1641b5);

@@ -5,7 +5,8 @@
     </div>
     <div class="col-md-6 doc-verification-wrapper">
       <div class="doc-verification-container mb-5">
-        <img @click="selectPhoto" class="doc-verification" src="../../../assets/verification/face.svg" alt="photo">
+        <img v-if="!$store.state.authUser.files.photo.url" @click="selectPhoto" class="doc-verification" src="../../../assets/verification/face.svg" alt="photo">
+        <img v-else @click="selectPhoto" class="doc-verification" :src="$store.state.authUser.files.photo.url" alt="photo">
         <div v-if="!$store.state.authUser.files.photo.url" @click="selectPhoto">
           <div class="verification-info">Click to upload photo</div>
           <div class="doc-info">(Photo should be clear and bright enough for easy verification)</div>
@@ -26,46 +27,45 @@
             <div v-if="photoVerificationIsPending" class="doc-info">(Verification usually take up to 12 hours or more)</div>
           </div>
           <div>
-            <button class="ver-action-button">View</button>
+            <button @click="showImageOnPopUp('photo')" class="ver-action-button">View</button>
             <button v-if="photoVerificationIsPending" @click="selectPhoto" class="ver-action-button">Reupload</button>
           </div>
         </div>
-        <input type="file" @change="handlePhotoUpload" @input="uploadFile('photo')" ref="photo" hidden>
+        <input type="file" @change="handlePhotoUpload" ref="photo" hidden>
       </div>
     </div>
     <div class="col-md-6 doc-verification-wrapper">
       <div class="doc-verification-container mb-5">
-        <img @click="selectFile('doc')" class="doc-verification" src="../../../assets/verification/file.svg" alt="doc">
-        <div @click="selectFile('doc')" v-if="!docUploaded && !docUploading">
+        <img v-if="!$store.state.authUser.files.document.url" @click="selectDocument" class="doc-verification" src="../../../assets/verification/file.svg" alt="document">
+        <img v-else @click="selectDocument" class="doc-verification" :src="$store.state.authUser.files.document.url" alt="document">
+        <div v-if="!$store.state.authUser.files.document.url" @click="selectDocument">
           <div class="verification-info">Click to upload documents</div>
           <div class="doc-info">(National ID, International Passport or Voter's Card)</div>
         </div>
         <div>
-          <div v-if="!docUploaded && docUploading">
+          <div v-if="uploading.document">
             <div class="ver-upload-progress-container">
-              <div class="ver-upload-progress" :style="{'width': docUploadPercent+'%'}"></div>
+              <div class="ver-upload-progress" :style="{'width': $store.state.uploadProgress.document+'%'}"></div>
             </div>
             <div class="ver-upload-progress-percentage">
-              {{ docUploadPercent }}%
+              {{ $store.state.uploadProgress.document }} %
             </div>
           </div>
         </div>
-        <div>
-          <div v-if="docUploaded && !docUploading">
-            <div>
-              <div class="verification-info text-success">Uploaded Successfully</div>
-              <div class="doc-info">(Verification usually take up to 12 hours or more)</div>
-            </div>
-            <div>
-              <button @click="showImage = true" class="ver-action-button">View</button>
-              <button @click="selectFile('doc', true)" class="ver-action-button">Reupload</button>
-            </div>
+        <div v-if="$store.state.authUser.files.document.url">
+          <div>
+            <div :class="getDocumentVerificationStatus.class" class="verification-info text-success">{{ getDocumentVerificationStatus.message }}</div>
+            <div v-if="documentVerificationIsPending" class="doc-info">(Verification usually take up to 12 hours or more)</div>
+          </div>
+          <div>
+            <button @click="showImageOnPopUp('document')" class="ver-action-button">View</button>
+            <button v-if="documentVerificationIsPending" @click="selectDocument" class="ver-action-button">Reupload</button>
           </div>
         </div>
-        <input type="file" @input="uploadFile('doc')" ref="ver_doc" hidden>
+        <input type="file" @change="handleDocumentUpload" ref="document" hidden>
       </div>
     </div>
-    <app-view-doc v-if="showImage" @close="showImage = false"/>
+    <app-view-doc v-if="showImage" :imgSrc="this.imgSrc" @close="showImage = false"/>
   </div>
 </template>
 
@@ -78,35 +78,56 @@
     data(){
       return{
         photo: null,
+        document: null,
         uploading: {
           photo: false,
           document: false
         },
         alert: { present: false, type: null, message: null },
         showImage: false,
-        photoUploaded: false,
-        docUploaded: false,
-        photoUploading: false,
-        docUploading: false,
-        photoUploadPercent: 0,
-        docUploadPercent: 0,
+        imgSrc: null
       }
     },
     methods: {
       selectPhoto(){
         if (!this.uploading.photo){
-          this.$refs.photo.click()
+          if (this.$store.state.authUser.files.photo.status){
+            if (this.photoVerificationIsPending){
+              this.$refs.photo.click();
+            }
+          }else{
+            this.$refs.photo.click();
+          }
+        }
+      },
+      selectDocument(){
+        if (!this.uploading.document){
+          if (this.$store.state.authUser.files.document.status){
+            if (this.documentVerificationIsPending){
+              this.$refs.document.click();
+            }
+          }else{
+            this.$refs.document.click();
+          }
         }
       },
       handlePhotoUpload(event){
         if (!this.uploading.photo){
           this.photo = event.target.files[0];
           if (this.photo){
-            this.uploadSelectedFile();
+            this.uploadSelectedPhoto();
           }
         }
       },
-      uploadSelectedFile(){
+      handleDocumentUpload(event){
+        if (!this.uploading.document){
+          this.document = event.target.files[0];
+          if (this.document){
+            this.uploadSelectedDocument();
+          }
+        }
+      },
+      uploadSelectedPhoto(){
         this.uploading.photo = true;
         const formData = new FormData();
         formData.append('type', 'photo')
@@ -127,52 +148,50 @@
             this.alert = { present: true, type: 'error', message: err.response.data.message ?? 'Something went wrong' };
           });
       },
+      uploadSelectedDocument(){
+        this.uploading.document = true;
+        const formData = new FormData();
+        formData.append('type', 'document')
+        formData.append('file', this.document, this.document.name)
+        Verification.uploadDocument(formData)
+          .then(res => {
+            this.clearDocumentUploadProgress();
+            this.alert = { present: true, type: 'success', message: res.data.message };
+          })
+          .then(() => {
+            Auth.user()
+                .then(res => {
+                  this.$store.commit('updateUserDetails', res.data.data);
+                });
+          })
+          .catch(err => {
+            this.clearDocumentUploadProgress();
+            this.alert = { present: true, type: 'error', message: err.response.data.message ?? 'Something went wrong' };
+          });
+      },
+      showImageOnPopUp(type){
+        this.showImage = true;
+        this.imgSrc = type === 'photo' ? this.$store.state.authUser.files.photo.url : this.$store.state.authUser.files.document.url;
+      },
       clearPhotoUploadProgress(){
         this.uploading.photo = false;
         this.$store.state.uploadProgress.photo = 0;
         this.alert = { present: false, type: null, message: null };
       },
-      selectFile(type, reUploading = false){
-        if ((!this.photoUploaded && !this.photoUploading) || (!this.docUploaded && !this.docUploading) || reUploading){
-          if (type === 'photo'){
-            let fileInputElement = this.$refs.ver_photo;
-            fileInputElement.click();
-          }else if (type === 'doc'){
-            let fileInputElement = this.$refs.ver_doc;
-            fileInputElement.click();
-          }
-        }
+      clearDocumentUploadProgress(){
+        this.uploading.document = false;
+        this.$store.state.uploadProgress.document = 0;
+        this.alert = { present: false, type: null, message: null };
       },
-      showUploadStatus(type){
-        if (type === 'photo'){
-          this.photoUploaded = false;
-          this.photoUploadPercent = 0;
-          this.photoUploading = true;
-        }else if (type === 'doc'){
-          this.docUploaded = false;
-          this.docUploadPercent = 0;
-          this.docUploading = true;
+      getVerificationStatus(status){
+        if (status === 'pending'){
+          return { class: 'text-warning', message: "Verification Pending" };
+        }else if (status === 'approved'){
+          return { class: 'text-success', message: "Document Verified" };
+        }else if (status === 'declined'){
+          return { class: 'text-danger', message: "Verification Decline" };
         }
-        let uploadInterval = setInterval(() => {
-          if (type === 'photo' && this.photoUploadPercent >= 100){
-            clearInterval(uploadInterval);
-            this.photoUploading = false;
-            this.photoUploaded = true;
-          }else if (type === 'doc' && this.docUploadPercent >= 100){
-            clearInterval(uploadInterval);
-            this.docUploading = false;
-            this.docUploaded = true;
-          }
-          if (type === 'photo'){
-            this.photoUploadPercent += 5;
-          }else if (type === 'doc'){
-            this.docUploadPercent += 5;
-          }
-        }, 50);
-
-      },
-      uploadFile(type){
-        this.showUploadStatus(type);
+        return { class: null, message: null};
       },
     },
     components: {
@@ -182,18 +201,18 @@
     computed: {
       getPhotoVerificationStatus(){
         let status = this.$store.state.authUser.files.photo.status;
-        if (status === 'pending'){
-          return { class: 'text-warning', message: "Verification Pending" };
-        }else if (status === 'approved'){
-          return { class: 'text-success', message: "Photo Verified" };
-        }else if (status === 'declined'){
-          return { class: 'text-danger', message: "Verification Decline" };
-        }
-        return { class: null, message: null};
+        return this.getVerificationStatus(status);
+      },
+      getDocumentVerificationStatus(){
+        let status = this.$store.state.authUser.files.document.status;
+        return this.getVerificationStatus(status);
       },
       photoVerificationIsPending(){
         return this.$store.state.authUser.files.photo.status === 'pending';
-      }
+      },
+      documentVerificationIsPending(){
+        return this.$store.state.authUser.files.document.status === 'pending';
+      },
     }
   }
 </script>

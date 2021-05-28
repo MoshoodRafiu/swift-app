@@ -7,8 +7,8 @@
           <div class="modal-body">
             <div class="text-center">
               <slot name="message">
-                <div class="my-2">
-                  <img src="../../../../assets/not-found.svg" width="100%" alt="">
+                <div class="my-2 mx-auto">
+                  <img :src="imgSrc" style="max-height: 200px" alt="Document">
                 </div>
               </slot>
             </div>
@@ -21,7 +21,7 @@
 
 <script>
 export default {
-  props: ['success'],
+  props: ['success', 'imgSrc'],
   mounted() {
     let self = this;
     window.addEventListener('keyup', function(event) {

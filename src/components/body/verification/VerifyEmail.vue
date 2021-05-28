@@ -49,7 +49,7 @@ export default {
     if (token && email){
       this.verifyEmail({token, email});
     }else{
-      this.$router.push({name: 'verifications'})
+      this.$router.push({name: 'home'})
     }
   },
   created() {

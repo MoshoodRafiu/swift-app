@@ -17,5 +17,13 @@ export default {
     async user(){
         await Csrf.getCookie();
         return Api.post('me');
+    },
+    async requestPasswordResetLink(credentials){
+        await Csrf.getCookie();
+        return Api.post('password/reset/send-link', credentials);
+    },
+    async resetPassword(credentials){
+        await Csrf.getCookie();
+        return Api.post('password/reset', credentials);
     }
 }
