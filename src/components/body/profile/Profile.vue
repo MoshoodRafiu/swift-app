@@ -70,34 +70,60 @@
         <div class="col-md-6 r-border">
           <div class="row">
             <div class="col-md-12">
-              <h5 class="section-title">Change Transaction Pin</h5>
+              <h5 v-if="$store.state.authUser.hasPin" class="section-title">Change Transaction Pin</h5>
+              <h5 v-else class="section-title">Create Transaction Pin</h5>
             </div>
           </div>
-          <div class="row">
+          <div v-if="$store.state.authUser.hasPin" class="row">
             <div class="col-md-12 mb-3">
               <label for="o_pin">Old Pin</label>
               <div class="trade-form-group">
-                <input id="o_pin" type="number" class="trade-form-control" placeholder="Old Pin">
+                <input id="o_pin" v-model="pin.old" type="password" class="trade-form-control" placeholder="Old Pin">
               </div>
+              <app-validation-error-message v-if="errors && errors.old_pin" :message="errors.old_pin[0]"/>
             </div>
             <div class="col-md-12 mb-3">
               <label for="n_pin">New Pin</label>
               <div class="trade-form-group">
-                <input id="n_pin" type="number" class="trade-form-control" placeholder="New Pin">
+                <input id="n_pin" v-model="pin.new" type="password" class="trade-form-control" placeholder="New Pin">
               </div>
+              <app-validation-error-message v-if="errors && errors.new_pin" :message="errors.new_pin[0]"/>
             </div>
             <div class="col-md-12">
               <label for="cn_pin">Confirm New Pin</label>
               <div class="trade-form-group">
-                <input id="cn_pin" type="number" class="trade-form-control" placeholder="Confirm New Pin">
+                <input id="cn_pin" v-model="pin.confirm_new" type="password" class="trade-form-control" placeholder="Confirm New Pin">
+              </div>
+            </div>
+            <div class="col-md-12 small">
+              <a class="small" href="#">Forgot your pin?</a>
+            </div>
+          </div>
+          <div v-else class="row">
+            <div class="col-md-12 mb-3">
+              <label for="pin">Pin</label>
+              <div class="trade-form-group">
+                <input id="pin" v-model="pin.new" type="password" class="trade-form-control" placeholder="Pin">
+              </div>
+              <app-validation-error-message v-if="errors && errors.pin" :message="errors.pin[0]"/>
+            </div>
+            <div class="col-md-12">
+              <label for="c_pin">Confirm Pin</label>
+              <div class="trade-form-group">
+                <input id="c_pin" v-model="pin.confirm_new" type="password" class="trade-form-control" placeholder="Confirm Pin">
               </div>
             </div>
           </div>
           <div class="row mb-5">
             <div class="col-md-12 mx-auto">
               <div class="trade-action-btn-wrapper">
-                <button class="trade-action-btn">
-                  Change Pin
+                <button v-if="$store.state.authUser.hasPin" @click="updatePin" class="trade-action-btn">
+                  <span v-if="loading.pin" class="spinner-border" role="status"></span>
+                  <span v-else>Change Pin</span>
+                </button>
+                <button v-else @click="createPin" class="trade-action-btn">
+                  <span v-if="loading.pin" class="spinner-border" role="status"></span>
+                  <span v-else>Create Pin</span>
                 </button>
               </div>
             </div>
@@ -151,6 +177,7 @@
   import Profile from "@/apis/Profile";
   import appAlert from "@/components/notification/Alert";
   import appValidationErrorMessage from "@/components/notification/ValidationErrorMessage";
+  import Auth from "@/apis/Auth";
   export default {
     data(){
       return{
@@ -167,13 +194,26 @@
           new: null,
           confirm_new: null
         },
-        loading: {profile: false, password: false},
+        pin: {
+          old: null,
+          new: null,
+          confirm_new: null
+        },
+        loading: {profile: false, password: false, pin: false},
         errors: [],
         alert: { present: false, type: null, message: null }
       }
     },
     created() {
       this.$store.commit('hideNavigations');
+    },
+    mounted() {
+      if (this.$store.state.isAuthenticated){
+        Auth.user()
+          .then(res => {
+            this.$store.commit('updateUserDetails', res.data.data);
+          });
+      }
     },
     methods: {
       updateProfile(){
@@ -229,6 +269,67 @@
                   this.scrollToTop();
                 }
                 this.loading.password = false;
+              });
+        }
+      },
+      updatePin(){
+        let credentials = {
+          old_pin: this.pin.old,
+          new_pin: this.pin.new,
+          new_pin_confirmation: this.pin.confirm_new
+        }
+        if (!this.loading.pin){
+          this.loading.pin = true;
+          Profile.updatePin(credentials)
+              .then(res => {
+                this.removeErrorsAndHideLoader();
+                this.alert = { present: true, type: 'success', message: res.data.message };
+                this.loading.pin = false;
+                this.scrollToTop();
+                this.pin = { old: null, new: null, confirm_new: null };
+              })
+              .catch(err => {
+                this.removeErrorsAndHideLoader();
+                this.alert = { present: true, type: 'error', message: err.response.data.message ?? 'Something went wrong' };
+                if (err.response.status === 422){
+                  this.errors = err.response.data.errors;
+                }else{
+                  this.scrollToTop();
+                }
+                this.loading.pin = false;
+              });
+        }
+      },
+      createPin(){
+        let credentials = {
+          pin: this.pin.new,
+          pin_confirmation: this.pin.confirm_new
+        }
+        if (!this.loading.pin){
+          this.loading.pin = true;
+          Profile.createPin(credentials)
+              .then(res => {
+                this.removeErrorsAndHideLoader();
+                this.alert = { present: true, type: 'success', message: res.data.message };
+                this.loading.pin = false;
+                this.scrollToTop();
+                this.pin = { old: null, new: null, confirm_new: null };
+              })
+              .then(() => {
+                Auth.user()
+                  .then(res => {
+                    this.$store.commit('updateUserDetails', res.data.data);
+                  });
+              })
+              .catch(err => {
+                this.removeErrorsAndHideLoader();
+                this.alert = { present: true, type: 'error', message: err.response.data.message ?? 'Something went wrong' };
+                if (err.response.status === 422){
+                  this.errors = err.response.data.errors;
+                }else{
+                  this.scrollToTop();
+                }
+                this.loading.pin = false;
               });
         }
       },

@@ -10,4 +10,12 @@ export default {
         await Csrf.getCookie();
         return Api.post('password/update', credentials);
     },
+    async createPin(credentials){
+        await Csrf.getCookie();
+        return Api.post('pin/store', credentials);
+    },
+    async updatePin(credentials){
+        await Csrf.getCookie();
+        return Api.post('pin/update', credentials);
+    },
 }
