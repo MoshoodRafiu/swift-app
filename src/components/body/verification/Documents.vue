@@ -1,12 +1,12 @@
 <template>
   <div class="row">
-    <div class="col-12 px-4 py-3">
+    <div class="col-12 px-4 py-2">
       <app-alert v-if="alert.present" :type="alert.type" :message="alert.message"/>
     </div>
     <div class="col-md-6 doc-verification-wrapper">
       <div class="doc-verification-container mb-5">
         <img v-if="!$store.state.authUser.files.photo.url" @click="selectPhoto" class="doc-verification" src="../../../assets/verification/face.svg" alt="photo">
-        <img v-else @click="selectPhoto" class="doc-verification" :src="$store.state.authUser.files.photo.url" alt="photo">
+        <img v-else @click="selectPhoto" class="img-fluid mb-2" :src="$store.state.authUser.files.photo.url" alt="photo">
         <div v-if="!$store.state.authUser.files.photo.url" @click="selectPhoto">
           <div class="verification-info">Click to upload photo</div>
           <div class="doc-info">(Photo should be clear and bright enough for easy verification)</div>
@@ -37,7 +37,7 @@
     <div class="col-md-6 doc-verification-wrapper">
       <div class="doc-verification-container mb-5">
         <img v-if="!$store.state.authUser.files.document.url" @click="selectDocument" class="doc-verification" src="../../../assets/verification/file.svg" alt="document">
-        <img v-else @click="selectDocument" class="doc-verification" :src="$store.state.authUser.files.document.url" alt="document">
+        <img v-else @click="selectDocument" class="img-fluid mb-2" :src="$store.state.authUser.files.document.url" alt="document">
         <div v-if="!$store.state.authUser.files.document.url" @click="selectDocument">
           <div class="verification-info">Click to upload documents</div>
           <div class="doc-info">(National ID, International Passport or Voter's Card)</div>
@@ -237,7 +237,7 @@
     color: #807e7e;
   }
   .doc-verification-wrapper{
-    height: 300px;
+    /*height: 300px;*/
     display: flex;
     justify-content: center;
     align-items: center;

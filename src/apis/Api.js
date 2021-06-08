@@ -1,9 +1,10 @@
 import axios from "axios"
 import {store} from "@/store/store";
+import router from '../router';
 
 const Api = axios.create({
     baseURL: 'http://localhost:8000/'
-    // baseURL: 'http://api.swifthrive.com/'
+    // baseURL: 'http://api.swifthrive.com/',
 });
 
 Api.defaults.withCredentials = true;
@@ -12,8 +13,8 @@ Api.interceptors.response.use(res => {
 }, err => {
     if (err.response.status === 401){
         store.commit('logUserOut');
-        if (this.$route.name !== 'home'){
-            this.$router.push({name: 'home'}).then();
+        if (router.currentRoute.name !== 'home'){
+            router.push({name: 'home'}).then();
         }
     }
     return Promise.reject(err);

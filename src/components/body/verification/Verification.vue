@@ -70,6 +70,6 @@
   padding: 20px 15px;
 }
 .verification-body{
-  min-height: 250px;
+  /*min-height: 250px;*/
 }
 </style>

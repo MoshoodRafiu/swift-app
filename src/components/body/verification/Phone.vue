@@ -1,10 +1,10 @@
 <template>
   <div>
-    <div v-if="$store.state.authUser.verification.phone.status" class="verified-img-container">
+    <div v-if="$store.state.authUser.verification.phone.status" class="verified-img-container my-3">
       <div class="text-center">
         <img class="verified-img" src="../../../assets/verification/phone.svg" alt="verified">
         <div class="text-center verified-text mt-3">Phone Number Verified</div>
-        <div class="phone-number my-1">09023415678</div>
+        <div class="phone-number my-1">{{ $store.state.authUser.phone }}</div>
         <div class="email-address small my-1" style="font-size: 10px">verified on {{ $store.state.authUser.verification.phone.on }}</div>
       </div>
     </div>
@@ -127,18 +127,18 @@
 
 <style>
 .trade-action-btn.send-code{
-  background: #B1AFAF;
-  color: #000000 !important;
+  background: #312f2f;
+  color: #ffffff !important;
 }
 .trade-form-control.disabled{
   cursor: not-allowed;
 }
 .trade-action-btn.send-code.disabled,
 .trade-action-btn.send-code.disabled:hover {
-  background: #c4c4c4 !important;
+  background: #312f2f !important;
 }
 .trade-action-btn.send-code:hover{
-  background: #c4c4c4 !important;
+  background: #242020 !important;
 }
 .phone-number{
   font-size: 13px;

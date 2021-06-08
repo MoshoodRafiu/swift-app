@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import App from './App.vue'
 import VueRouter from "vue-router";
-import { routes } from "./routes";
+import router from "./router";
 import { store } from "@/store/store";
 import SlideUpDown from 'vue-slide-up-down';
 import {Tabs, Tab} from 'vue-tabs-component';
@@ -22,41 +22,7 @@ Vue.component('tab', Tab);
 Vue.use(VueRouter);
 Vue.component('slide-up-down', SlideUpDown);
 
-const router = new VueRouter({
-  routes,
-  mode: 'history',
-  scrollBehavior (to, from, savedPosition) {
-    if (savedPosition) {
-      return savedPosition
-    }
-    else {
-      return { x: 0, y: 0 }
-    }
-  }
-});
 Vue.config.productionTip = false
-
-router.beforeEach((to, from, next) => {
-  if (to.matched.some(record => record.meta.requiresAuth)) {
-    if (!store.state.isAuthenticated) {
-      next({
-        name: 'login'
-      })
-    } else {
-      next()
-    }
-  }else if(to.matched.some(record => record.meta.requiresGuest)){
-    if (store.state.isAuthenticated) {
-      next({
-        name: 'home',
-      })
-    } else {
-      next()
-    }
-  } else {
-    next() // make sure to always call next()!
-  }
-})
 
 new Vue({
   router,

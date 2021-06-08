@@ -1,6 +1,6 @@
 <template>
   <div class="text-danger small">
-    <strong>{{ message }}</strong>
+    <strong class="small font-weight-bolder">{{ message }}</strong>
   </div>
 </template>
 

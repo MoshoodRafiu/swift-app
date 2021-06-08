@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="emailIsVerified" class="verified-img-container">
+    <div v-if="emailIsVerified" class="verified-img-container my-3">
       <div class="text-center">
         <img class="verified-img" src="../../../assets/verification/mail.svg" alt="verified">
         <div class="text-center verified-text mt-3">Email Address Verified</div>
